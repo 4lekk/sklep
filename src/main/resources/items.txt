@@ -1,2 +1,2 @@
-kubek,30.0,40.0,jakies cos
-szklanka,50.0,60.0,inne cos
+NAME,PRICE,WEIGHT,ADDED ON,DESCRIPTION
+kubek,10.0,20.0,2023-06-15,jakis tekst

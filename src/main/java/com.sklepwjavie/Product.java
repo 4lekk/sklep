@@ -1,20 +1,30 @@
 package com.sklepwjavie;
+import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvBindByPosition;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 public class Product {
-    @CsvBindByPosition(position = 0)
+    @CsvBindByName
     private String name;
-    @CsvBindByPosition(position = 1)
+    @CsvBindByName
     private float price;
-    @CsvBindByPosition(position = 2)
+    @CsvBindByName
     private float weight;
-    @CsvBindByPosition(position = 3)
+    private LocalDateTime fullDate;
+    @CsvBindByName(column = "ADDED ON")
+    private String date;
+    @CsvBindByName
     private String description;
 
-    public Product(String n, float p, float w, String d) {
+    public Product(String n, float p, float w, LocalDateTime ld, String d) {
         name = n;
         price = p;
         weight = w;
+        fullDate = ld;
+        date = ld.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
         description = d;
     }
 
@@ -24,7 +34,8 @@ public class Product {
 
     @Override
     public String toString() {
-        return name + ", " + Float.toString(price) + "," + Float.toString(weight) + ", " + description;
+        return name + ", " + Float.toString(price) + "," + Float.toString(weight) + ", " +
+                date + ", " + description;
     }
 
     public String getName()
@@ -43,6 +54,12 @@ public class Product {
     {
         return description;
     }
+    public LocalDateTime getFullDate() {
+        return fullDate;
+    }
+    public String getDate() {
+        return date;
+    }
 
     public void setName(String s)
     {
@@ -59,5 +76,11 @@ public class Product {
     public void setDescription(String s)
     {
         description = s;
+    }
+    public void setFullDate(LocalDateTime d){
+        fullDate = d;
+    }
+    public void setDate(String s) {
+        date = s;
     }
 }

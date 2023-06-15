@@ -4,33 +4,16 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.*;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
+import org.apache.commons.collections.comparators.FixedOrderComparator;
 public class FileApp {
-
-    /*public static void readProducts(BufferedReader reader, List<Product> products)
-            throws IOException {
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            String name = line.substring(line.indexOf(" ") + 1);
-            line = reader.readLine();
-            float price = Float.parseFloat(line.substring(line.indexOf(" ") + 1));
-            line = reader.readLine();
-            float weight = Float.parseFloat(line.substring(line.indexOf(" ") + 1));
-            line = reader.readLine();
-            String description = line.substring(line.indexOf(" ") + 1);
-            products.add(new Product(name, price, weight, description));
-        }
-    }*/
-
-    /*public static void writeProducts(StatefulBeanToCsv<Product> beanToCsv, List<Product> products)
-            throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        beanToCsv.write(products);
-    }*/
 
     public static void main(String[] args) {
         List<Product> products = new ArrayList<Product>();
@@ -48,36 +31,34 @@ public class FileApp {
 
         try {
             file = new File(path.toString());
-
             file.createNewFile();
-            System.out.println("made it here");
 
             file_reader = Files.newBufferedReader(path);
 
             sc = new Scanner(System.in);
             ins = new InputStreamReader(System.in);
             reader = new BufferedReader(ins);
-//            readProducts(file_reader, products);
 
+            // zapisac zmiany nawet przy zamknieciu programu; od razu zapisac zmiany do pliku
 
-            ColumnPositionMappingStrategy<Product> strat = new ColumnPositionMappingStrategy<>();
+            HeaderColumnNameMappingStrategy<Product> strat =
+                    new HeaderColumnNameMappingStrategy<>();
             strat.setType(Product.class);
-            String[] fields = {"name", "price", "weight", "description"};
-            strat.setColumnMapping(fields);
+
+            String[] column_order = {"NAME", "PRICE", "WEIGHT", "ADDED ON", "DESCRIPTION"};
+            FixedOrderComparator comparator = new FixedOrderComparator(column_order);
+            strat.setColumnOrderOnWrite(comparator);
             CsvToBean<Product> csvToBean = new CsvToBeanBuilder<Product>(file_reader)
                     .withMappingStrategy(strat)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
             products = csvToBean.parse();
 
-            file_writer = Files.newBufferedWriter(path);
-            StatefulBeanToCsv<Product> beanToCsv = new StatefulBeanToCsvBuilder<Product>(file_writer)
-                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-                    .build();
+
+            StatefulBeanToCsv<Product> beanToCsv;
 
             System.out.println("Witaj w sklepie. Oto co możesz zrobić:");
             helper.printMenu();
-
             while (true) {
                 System.out.println();
                 System.out.print("Wybierz opcję: ");
@@ -91,6 +72,7 @@ public class FileApp {
                                 System.out.println("Nazwa: " + p.getName());
                                 System.out.println("Cena: " + p.getPrice());
                                 System.out.println("Waga: " + p.getWeight());
+                                System.out.println("Data dodania: " + p.getDate());
                                 System.out.println("Opis: " + p.getDescription());
                                 System.out.println();
                             }
@@ -107,6 +89,9 @@ public class FileApp {
                         p.setPrice(Float.parseFloat(reader.readLine()));
                         System.out.println("Podaj wagę nowego produktu: ");
                         p.setWeight(Float.parseFloat(reader.readLine()));
+                        p.setFullDate(LocalDateTime.now());
+                        p.setDate(p.getFullDate().
+                                format(DateTimeFormatter.ISO_LOCAL_DATE));
                         System.out.println("Podaj opis nowego produktu: ");
                         p.setDescription(reader.readLine());
                         products.add(p);
@@ -163,7 +148,12 @@ public class FileApp {
                         helper.printMenu();
                         break;
                     case 6: {
-//                        writeProducts(beanToCsv, products);
+                        file_writer = Files.newBufferedWriter(path);
+                        beanToCsv =
+                                new StatefulBeanToCsvBuilder<Product>(file_writer)
+                                        .withMappingStrategy(strat)
+                                        .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                                        .build();
                         beanToCsv.write(products);
                         file_writer.flush();
                         System.out.println("Żegnamy i zapraszamy ponownie!");
