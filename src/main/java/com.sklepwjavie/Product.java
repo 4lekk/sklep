@@ -1,22 +1,20 @@
 package com.sklepwjavie;
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvBindByPosition;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 public class Product {
-    @CsvBindByName
+
     private String name;
-    @CsvBindByName
+
     private float price;
-    @CsvBindByName
+
     private float weight;
     private LocalDateTime fullDate;
-    @CsvBindByName(column = "ADDED ON")
+
     private String date;
-    @CsvBindByName
+
     private String description;
 
     public Product(String n, float p, float w, LocalDateTime ld, String d) {

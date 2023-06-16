@@ -7,7 +7,6 @@ public class App {
 
     public static void main(String[] args) {
         List<Product> products = new ArrayList<Product>();
-        Helper helper = new Helper();
         Scanner sc = null;
         InputStreamReader ins;
         BufferedReader reader = null;
@@ -17,6 +16,7 @@ public class App {
             sc = new Scanner(System.in);
             ins = new InputStreamReader(System.in);
             reader = new BufferedReader(ins);
+            Helper helper = new Helper(reader, sc);
 
             System.out.println("Witaj w sklepie. Oto co możesz zrobić:");
             helper.printMenu();
