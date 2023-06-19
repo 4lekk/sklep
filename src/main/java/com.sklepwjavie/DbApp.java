@@ -1,10 +1,12 @@
 package com.sklepwjavie;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.*;
-import java.time.format.DateTimeFormatter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -17,58 +19,20 @@ public class DbApp {
         InputStreamReader ins;
         BufferedReader reader = null;
 
-        String url = "jdbc:postgresql://localhost/mydb";
-        String user = "postgres";
-        String pwd = "laptopnastole";
-
-        Connection connection = null;
-        Statement statement = null;
+        SessionFactory sessionFactory = null;
+        Session session = null;
 
         try {
-
             scanner = new Scanner(System.in);
             ins = new InputStreamReader(System.in);
             reader = new BufferedReader(ins);
 
             Helper helper = new Helper(reader, scanner);
 
-            connection = DriverManager.getConnection(url, user, pwd);
-            System.out.println("Connected to the database");
-            statement = connection.createStatement();
+            sessionFactory = helper.setUp();
+            session = sessionFactory.openSession();
+            products = helper.getProductsFromDB(session);
 
-            String createTable = "CREATE TABLE items (" +
-                    "name          varchar(80)," +
-                    "price         real," +
-                    "weight         real," +
-                    "added_on           timestamp," +
-                    "description    varchar(120));";
-            String checkIfTableExists =
-                    "SELECT EXISTS (" +
-                        "SELECT FROM pg_tables " +
-                            "WHERE " +
-                                "schemaname = 'public' AND " +
-                                "tablename = 'items');";
-            String queryItems =
-                    "SELECT * FROM items;";
-            ResultSet resultSet = statement.executeQuery(checkIfTableExists);
-            while (resultSet.next()) {
-                if (!resultSet.getBoolean("exists")) {
-                    statement.execute(createTable);
-                }
-                else {
-                    resultSet = statement.executeQuery(queryItems);
-                    while (resultSet.next()) {
-                        Product p = new Product();
-                        p.setName(resultSet.getString("name"));
-                        p.setPrice(resultSet.getFloat("price"));
-                        p.setWeight(resultSet.getFloat("weight"));
-                        p.setFullDate(resultSet.getTimestamp("added_on").toLocalDateTime());
-                        p.setDate(p.getFullDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-                        p.setDescription(resultSet.getString("description"));
-                        products.add(p);
-                    }
-                }
-            }
             System.out.println("Witaj w sklepie. Oto co możesz zrobić:");
             helper.printMenu();
             while (true) {
@@ -81,15 +45,16 @@ public class DbApp {
                         break;
                     }
                     case 2: {
-                        helper.addProduct(statement, products);
+                        helper.addProduct(products, session);   // ma zwracać produkt
+                        // add/save product do DB; klasa ProductService
                         break;
                     }
                     case 3: {
-                        helper.deleteProducts(statement, products);
+                        helper.deleteProducts(products, session);
                         break;
                     }
                     case 4: {
-                        helper.editProduct(statement, products);
+                        helper.editProduct(products, session);
                         break;
                     }
                     case 5:
@@ -112,16 +77,16 @@ public class DbApp {
             System.err.println("Proszę wpisać numer w przedziale 1-6");
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 reader.close();
-                connection.close();
-                statement.close();
+                session.close();
+                sessionFactory.close();
             }
             catch (IOException e) {
 
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
         }
     }

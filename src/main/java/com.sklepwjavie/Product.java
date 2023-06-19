@@ -1,19 +1,25 @@
 package com.sklepwjavie;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "items")
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="product_id")
+    private Long productId;
     private String name;
 
     private float price;
 
     private float weight;
-    private LocalDateTime fullDate;
 
-    private String date;
+    @Column(name = "added_on")
+    private LocalDateTime fullDate;
 
     private String description;
 
@@ -22,7 +28,6 @@ public class Product {
         price = p;
         weight = w;
         fullDate = ld;
-        date = ld.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
         description = d;
     }
 
@@ -33,9 +38,12 @@ public class Product {
     @Override
     public String toString() {
         return name + ", " + Float.toString(price) + "," + Float.toString(weight) + ", " +
-                date + ", " + description;
+                ", " + description;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
     public String getName()
     {
         return name;
@@ -55,10 +63,10 @@ public class Product {
     public LocalDateTime getFullDate() {
         return fullDate;
     }
-    public String getDate() {
-        return date;
-    }
 
+    public void setProductId(Long p) {
+        productId = p;
+    }
     public void setName(String s)
     {
         name = s;
@@ -77,8 +85,5 @@ public class Product {
     }
     public void setFullDate(LocalDateTime d){
         fullDate = d;
-    }
-    public void setDate(String s) {
-        date = s;
     }
 }
