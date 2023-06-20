@@ -7,10 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
 public class DbApp {
 
     public static void main(String[] args) {
@@ -22,19 +20,25 @@ public class DbApp {
         SessionFactory sessionFactory = null;
         Session session = null;
 
+        ProductService pService = null;
+
         try {
             scanner = new Scanner(System.in);
             ins = new InputStreamReader(System.in);
             reader = new BufferedReader(ins);
 
             Helper helper = new Helper(reader, scanner);
+            pService = new ProductService();
 
-            sessionFactory = helper.setUp();
+            sessionFactory = pService.setUp();
             session = sessionFactory.openSession();
-            products = helper.getProductsFromDB(session);
+            pService.setSession(session);
+
+            products = pService.getProductsFromDB();
 
             System.out.println("Witaj w sklepie. Oto co możesz zrobić:");
             helper.printMenu();
+
             while (true) {
                 System.out.println();
                 System.out.print("Wybierz opcję: ");
@@ -45,16 +49,22 @@ public class DbApp {
                         break;
                     }
                     case 2: {
-                        helper.addProduct(products, session);   // ma zwracać produkt
                         // add/save product do DB; klasa ProductService
+                        Product product = helper.getProductToAdd(products);
+                        pService.addToDB(product);
                         break;
                     }
                     case 3: {
-                        helper.deleteProducts(products, session);
+                        Product p = helper.getProductToRemove(products);
+                        if (p != null) {
+                            pService.removeFromDB(p);
+                        }
                         break;
                     }
                     case 4: {
-                        helper.editProduct(products, session);
+                        if (helper.editProductLocal(products)) {
+                            pService.editProductCharacteristicsInDB();
+                        }
                         break;
                     }
                     case 5:
