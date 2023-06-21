@@ -18,6 +18,10 @@ public class Product {
 
     private float weight;
 
+    public enum Characteristic {
+        NAME, PRICE, WEIGHT, DATE;
+    }
+
     @Column(name = "added_on")
     private LocalDateTime fullDate;
 

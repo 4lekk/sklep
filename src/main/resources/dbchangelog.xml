@@ -8,36 +8,20 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-    <changeSet  id="1"  author="bob">
-        <createTable  tableName="department">
-            <column  name="id"  type="int">
-                <constraints  primaryKey="true"  nullable="false"/>
+    <changeSet id="1" author="bob">
+        <createTable tableName="items">
+            <column name="product_id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
             </column>
-            <column  name="name"  type="varchar(50)">
-                <constraints  nullable="false"/>
+            <column name="name" type="varchar(80)"/>
+            <column name="price" type="real">
+                <constraints checkConstraint="CHECK (price >= 0)"/>
             </column>
-            <column  name="active"  type="boolean"  defaultValueBoolean="true"/>
+            <column name="weight" type="real">
+                <constraints checkConstraint="CHECK (weight >= 0)"/>
+            </column>
+            <column name="added_on" type="timestamp"/>
+            <column name="description" type="text"/>
         </createTable>
-    </changeSet>
-    <changeSet id="2" author="bob">
-        <dropTable tableName="department"/>
-    </changeSet>
-    <changeSet  id="3"  author="bob">
-        <createTable  tableName="department">
-            <column  name="id"  type="int">
-                <constraints  primaryKey="true"  nullable="false"/>
-            </column>
-            <column  name="name"  type="varchar(50)">
-                <constraints  nullable="false"/>
-            </column>
-            <column  name="active"  type="boolean"  defaultValueBoolean="true"/>
-        </createTable>
-    </changeSet>
-    <changeSet id="4" author="bob">
-        <insert tableName="department">
-            <column name="id" value="2"/>
-            <column name="name" value="something"/>
-            <column name="active" value="true"/>
-        </insert>
     </changeSet>
 </databaseChangeLog>

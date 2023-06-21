@@ -20,21 +20,19 @@ public class DbApp {
         SessionFactory sessionFactory = null;
         Session session = null;
 
-        ProductService pService = null;
-
         try {
             scanner = new Scanner(System.in);
             ins = new InputStreamReader(System.in);
             reader = new BufferedReader(ins);
 
             Helper helper = new Helper(reader, scanner);
-            pService = new ProductService();
 
-            sessionFactory = pService.setUp();
+            Config config = new Config();
+            sessionFactory = config.setUp();
             session = sessionFactory.openSession();
-            pService.setSession(session);
+            ProductService pService = new ProductService(session);
 
-            products = pService.getProductsFromDB();
+            products = pService.getProducts();
 
             System.out.println("Witaj w sklepie. Oto co możesz zrobić:");
             helper.printMenu();
@@ -49,21 +47,20 @@ public class DbApp {
                         break;
                     }
                     case 2: {
-                        // add/save product do DB; klasa ProductService
                         Product product = helper.getProductToAdd(products);
-                        pService.addToDB(product);
+                        pService.save(product);
                         break;
                     }
                     case 3: {
                         Product p = helper.getProductToRemove(products);
                         if (p != null) {
-                            pService.removeFromDB(p);
+                            pService.remove(p);
                         }
                         break;
                     }
                     case 4: {
                         if (helper.editProductLocal(products)) {
-                            pService.editProductCharacteristicsInDB();
+                            pService.editProductCharacteristics();
                         }
                         break;
                     }

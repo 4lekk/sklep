@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,11 +29,51 @@ public class Helper {
         scanner = s;
     }
 
-    public void printProducts(List<Product> products) {
+    private Product.Characteristic chooseProductOrdering() throws IOException {
+        System.out.println("Sortuj produkty na podstawie:");
+        System.out.println("1 - nazwa, 2 - cena, 3 - waga, 4 - data dodania");
+        int s = Integer.parseInt(reader.readLine());
+        switch (s) {
+            case 1: {
+                return Product.Characteristic.NAME;
+            }
+            case 2: {
+                return Product.Characteristic.PRICE;
+            }
+            case 3: {
+                return Product.Characteristic.WEIGHT;
+            }
+            case 4: {
+                return Product.Characteristic.DATE;
+            }
+        }
+        return Product.Characteristic.NAME;
+    }
+
+    public void printProducts(List<Product> products) throws IOException {
         if (products.isEmpty())
             System.out.println("Nie dodałeś jeszcze żadnych produktów");
         else {
-            for (Product p : products) {
+            List<Product> p_copy = new ArrayList<>(products);
+            Product.Characteristic c = chooseProductOrdering();
+            switch (c) {
+                case NAME: {
+                    p_copy.sort(Comparator.comparing(Product::getName));
+                    break;
+                }
+                case PRICE: {
+                    p_copy.sort(Comparator.comparing(Product::getPrice));
+                    break;
+                }
+                case WEIGHT: {
+                    p_copy.sort(Comparator.comparing(Product::getWeight));
+                    break;
+                }
+                case DATE: {
+                    p_copy.sort(Comparator.comparing(Product::getFullDate));
+                }
+            }
+            for (Product p : p_copy) {
                 System.out.println("Id: " + p.getProductId().longValue());
                 System.out.println("Nazwa: " + p.getName());
                 System.out.println("Cena: " + p.getPrice());
