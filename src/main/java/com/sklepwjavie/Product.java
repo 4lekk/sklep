@@ -1,6 +1,8 @@
 package com.sklepwjavie;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +14,14 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="product_id")
     private Long productId;
+
+    @NotBlank
     private String name;
 
+    @PositiveOrZero
     private float price;
 
+    @PositiveOrZero
     private float weight;
 
     @Column(name = "added_on")

@@ -1,57 +1,50 @@
 package com.sklepwjavie;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private List<Product> products;
 
     @Autowired
-    ProductService(ProductRepository pRepository) throws Exception {
-        products = new ArrayList<>();
+    ProductService(ProductRepository pRepository) {
         productRepository = pRepository;
     }
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product getProductById(Long id) {
-        var product = productRepository.findById(id);
-        Product p = null;
-        return product.orElse(p);
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
 
     public void save(Product p) {
         productRepository.save(p);
     }
-    public Product remove(Long id) {
-        var product = productRepository.findById(id);
-        Product p = null;
-        if (product.isEmpty()) {
-            return p;
+    public Optional<Product> remove(Long id) {
+        var optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isPresent()) {
+            productRepository.deleteById(id);
         }
-        productRepository.deleteById(id);
-        return product.get();
+        return optionalProduct;
     }
 
-    @Transactional
-    public void update(Long id, Product p) {
+    public Optional<Product> update(Long id, Product p) {
+        Optional<Product> o = Optional.empty();
         if (productRepository.existsById(id)) {
             Product pp = productRepository.findById(id).get();
             pp.setName(p.getName());
             pp.setPrice(p.getPrice());
             pp.setWeight(p.getWeight());
             pp.setDescription(p.getDescription());
+            productRepository.save(pp);
+            o = Optional.of(pp);
         }
-        else {
-            throw new IllegalStateException("product with id " + id + " does not exist");
-        }
+        return o;
     }
 }
