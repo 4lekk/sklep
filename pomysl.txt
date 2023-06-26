@@ -1,6 +1,0 @@
-pomysł: program na początku wyświetla 2 opcje: gość lub login;
-rejestracja nowego konta wymagałaby podania adresu email (login), hasła, imienia, nazwiska
-i numeru telefonu; login pozwala użytkownikowi zalogować się na swoje konto lub stworzyć nowe konto;
-zalogowany użykownik może dodawać, usuwać i modyfikować produkty; gość jedynie je oglądać
-do bazy danych trzeba by dodać nową kolumnę identyfikującą sprzedawcę danego produktu;
-dane do logowania użytkownika muszą być jakoś bezpiecznie przechowane

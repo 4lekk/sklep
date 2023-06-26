@@ -18,31 +18,20 @@ public class Product {
 
     private float weight;
 
-    public enum Characteristic {
-        NAME, PRICE, WEIGHT, DATE;
-    }
-
     @Column(name = "added_on")
     private LocalDateTime fullDate;
 
     private String description;
 
-    public Product(String n, float p, float w, LocalDateTime ld, String d) {
+    public Product(String n, float p, float w, String d) {
         name = n;
         price = p;
         weight = w;
-        fullDate = ld;
         description = d;
     }
 
     public Product() {
 
-    }
-
-    @Override
-    public String toString() {
-        return name + ", " + Float.toString(price) + "," + Float.toString(weight) + ", " +
-                ", " + description;
     }
 
     public Long getProductId() {

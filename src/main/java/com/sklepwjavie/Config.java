@@ -1,13 +1,13 @@
 package com.sklepwjavie;
 
-import liquibase.Contexts;
-import liquibase.LabelExpression;
-import liquibase.Liquibase;
-import liquibase.Scope;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.resource.ClassLoaderResourceAccessor;
+//import liquibase.Contexts;
+//import liquibase.LabelExpression;
+//import liquibase.Liquibase;
+//import liquibase.Scope;
+//import liquibase.database.Database;
+//import liquibase.database.DatabaseFactory;
+//import liquibase.database.jvm.JdbcConnection;
+//import liquibase.resource.ClassLoaderResourceAccessor;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -23,7 +23,7 @@ public class Config {
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure()
                 .build();
-        Map<String, Object> config = new HashMap<>();
+        /*Map<String, Object> config = new HashMap<>();
         Scope.child(config, () -> {
             MetadataSources metadataSources = new MetadataSources(registry);
             Connection connection = metadataSources
@@ -35,7 +35,7 @@ public class Config {
                     new ClassLoaderResourceAccessor(), database);
 
             liquibase.update(new Contexts(), new LabelExpression());
-        });
+        });*/
         SessionFactory sessionFactory = null;
         try {
             sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
