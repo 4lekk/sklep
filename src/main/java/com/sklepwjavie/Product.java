@@ -29,6 +29,9 @@ public class Product {
 
     private String description;
 
+    @Transient
+    private String formattedDate;
+
     public Product(String n, float p, float w, String d) {
         name = n;
         price = p;
@@ -63,6 +66,10 @@ public class Product {
         return fullDate;
     }
 
+    public String getFormattedDate() {
+        return formattedDate;
+    }
+
     public void setProductId(Long p) {
         productId = p;
     }
@@ -84,5 +91,9 @@ public class Product {
     }
     public void setFullDate(LocalDateTime d){
         fullDate = d;
+    }
+
+    public void setFormattedDate(String formattedDate) {
+        this.formattedDate = formattedDate;
     }
 }

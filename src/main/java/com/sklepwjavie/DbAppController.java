@@ -1,18 +1,21 @@
 package com.sklepwjavie;
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 //@RequestMapping("/items")
@@ -20,6 +23,8 @@ public class DbAppController {
 
     List<String> sortModes =
             Arrays.asList("nazwa", "cena", "waga", "data");
+    String currentSortLabel;
+    Comparator<Product> currentSortMode;
     Comparator<Product> nameSort = new Comparator<Product>() {
         @Override
         public int compare(Product o1, Product o2) {
@@ -60,68 +65,73 @@ public class DbAppController {
 
     public DbAppController(ProductService p) {
         pService = p;
+        currentSortLabel = "nazwa";
+        currentSortMode = nameSort;
+    }
+
+    private void addFormattedDateToProducts() {
+        for (Product p : pService.getAllProducts()) {
+            p.setFormattedDate(p.getFullDate()
+                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy, kk:mm")));
+        }
     }
 
     @GetMapping("index")
     public String getAllProducts(Model model) {
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", nameSort);
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "nazwa");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
     }
 
     @GetMapping("index/nazwa")
     public String getAllProductsSortedByName(Model model) {
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", nameSort);
+        currentSortLabel = "nazwa";
+        currentSortMode = nameSort;
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "nazwa");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
     }
 
     @GetMapping("index/cena")
     public String getAllProductsSortedByPrice(Model model) {
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", priceSort);
+        currentSortLabel = "cena";
+        currentSortMode = priceSort;
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "cena");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
     }
 
     @GetMapping("index/waga")
     public String getAllProductsSortedByWeight(Model model) {
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", weightSort);
+        currentSortLabel = "waga";
+        currentSortMode = weightSort;
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "waga");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
     }
 
     @GetMapping("index/data")
     public String getAllProductsSortedByDate(Model model) {
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", dateSort);
+        currentSortLabel = "data";
+        currentSortMode = dateSort;
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "data");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
-    }
-
-
-
-
-
-//    @GetMapping("css/style.css")
-//    public String getStyle(Model model) {
-//        return "../css/style.css";
-//    }
-    @GetMapping("items/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Optional<Product> p = pService.getProductById(id);
-        if (p.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(p.get());
     }
 
     @GetMapping("addProductForm")
@@ -133,19 +143,22 @@ public class DbAppController {
     public String addProduct(@Valid Product product,
                              BindingResult result,
                              Model model) {
-        product.setFullDate(LocalDateTime.now());
+        var date = LocalDateTime.now();
+        product.setFullDate(date);
+        product.setFormattedDate(product.getFullDate()
+                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy, kk:mm")));
         pService.save(product);
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", nameSort);
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "waga");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
     }
 
     @GetMapping("updateProductForm/{id}")
     public String updateProductForm(@PathVariable    Long id, Product product, Model model) {
         model.addAttribute("product", pService.getProductById(id).get());
-//        model.addAttribute("id", id.toString());
         return "updateProductForm";
     }
 
@@ -155,18 +168,13 @@ public class DbAppController {
                                 Model model) {
         Optional<Product> p = pService.update(id, product);
         if (p.isEmpty()) {
-//            return new ResponseEntity<>("Product with id " + id + " not found",
-//                    HttpStatus.NOT_FOUND);
 
         }
-        else {
-//            return new ResponseEntity<>("Successfully updated product with id " + id,
-//                    HttpStatus.OK);
-        }
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "waga");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        model.addAttribute("sort", currentSortMode);
+        addFormattedDateToProducts();
         model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", nameSort);
         return "index";
     }
 
@@ -174,16 +182,13 @@ public class DbAppController {
     public String deleteProduct(@PathVariable Long id, Product product, Model model) {
         Optional<Product> optionalProduct = pService.remove(id);
         if (optionalProduct.isEmpty()) {
-//            return new ResponseEntity<String>("Product with id " + id + " not found",
-//                    HttpStatus.NOT_FOUND);
+            
         }
-        else {
-
-        }
-        model.addAttribute("products", pService.getAllProducts());
-        model.addAttribute("sort", nameSort);
+        model.addAttribute("sort", currentSortMode);
         model.addAttribute("sortModes", sortModes);
-        model.addAttribute("dropDownOptionLabel", "waga");
+        model.addAttribute("dropDownOptionLabel", currentSortLabel);
+        addFormattedDateToProducts();
+        model.addAttribute("products", pService.getAllProducts());
         return "index";
     }
 }
