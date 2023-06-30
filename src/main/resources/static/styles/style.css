@@ -1,0 +1,132 @@
+table {
+  /*border: 1.5px solid black;*/
+  font: 16px "Open Sans", Helvetica, Arial, sans-serif;
+  border-spacing: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 95%;
+  text-align: center;
+}
+
+th,
+td {
+  padding: 8px 10px;
+}
+
+th {
+  vertical-align: bottom;
+}
+
+thead > tr {
+    font: 18px "Open Sans", Helvetica, Arial, sans-serif;
+}
+
+th:nth-child(1),
+th:nth-child(2),
+th:nth-child(3),
+th:nth-child(4),
+th:nth-child(5),
+th:nth-child(6) {
+  background-color: rgb(228, 240, 245);
+}
+
+thead th:nth-child(1) {
+  width: 7.5%;
+}
+
+thead th:nth-child(2) {
+  width: 17.5%;
+}
+
+thead th:nth-child(3) {
+  width: 10%;
+}
+
+thead th:nth-child(4) {
+  width: 10%;
+}
+
+thead th:nth-child(5) {
+  width: 15%;
+}
+
+thead th:nth-child(6) {
+  width: 30%;
+}
+
+thead th:nth-child(7) {
+  width: 7.5%;
+}
+
+thead th:nth-child(8) {
+  width: 7.5%;
+}
+
+/*thead th:nth-child(7) {
+  color: white;
+  border: 0px;
+}
+
+thead th:nth-child(8) {
+  color: white;
+  border: 0px;
+}*/
+
+
+/*thead th:nth-child(7) {
+  width: 5%;
+  border: none;
+}*/
+
+/*tbody td:not(nth-child(7)) {
+  border: 1.5px solid black;
+}*/
+
+
+tbody td:nth-child(1),
+tbody td:nth-child(2),
+tbody td:nth-child(3),
+tbody td:nth-child(4),
+tbody td:nth-child(5),
+tbody td:nth-child(6) {
+    border: 1.5px solid black;
+}
+
+footer {
+  padding: 2px;
+  background-color: #abbaba;
+}
+
+.evenRow {
+    background-color: rgb(237, 238, 242);
+}
+
+.columnHeader {
+    border: 1.5px solid black;
+}
+
+button {
+  display: inline-block;
+  color: green;
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+  border: 4px double #cccccc;
+  border-radius: 10px;
+  font-size: 28px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+#goToAddProductFormButton {
+  display: inline-block;
+    color: green;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    border: 4px double #cccccc;
+    border-radius: 10px;
+    font-size: 28px;
+    cursor: pointer;
+    margin: 5px;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+<!--    <meta http-equiv="x-ua-compatible" content="ie=edge">-->
+    <title>Sklep</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/styles/style.css}">
+</head>
+
+<body>
+<div th:switch="${products}">
+    <h2 th:case="null">Nie dodałeś jeszcze żadnych produktów!</h2>
+    <div th:case="*">
+        <h2>Produkty</h2>
+        <p>
+            <label for="sortCriteria">Sortuj</label>
+            <select name="sortCriteria" id="sortCriteria"
+                    onchange="window.location = this.options[this.selectedIndex].value;">
+                <option th:each="sortMode : ${sortModes}"
+                        th:attrappend="selected=${sortMode == dropDownOptionLabel}?
+                        'selected'"
+                        th:text="${sortMode}"
+                        th:value="'/index/' + ${sortMode}">
+                </option>
+            </select>
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th class="columnHeader" scope="col">Id</th>
+                    <th class="columnHeader" scope="col">Nazwa</th>
+                    <th class="columnHeader" scope="col">Cena</th>
+                    <th class="columnHeader" scope="col">Waga</th>
+                    <th class="columnHeader" scope="col">Data dodania</th>
+                    <th class="columnHeader" scope="col">Opis</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody th:with="productsSorted=${#lists.sort(products, sort)}">
+                <tr name="" th:each="product, statVar : ${productsSorted}">
+                    <div th:if="${statVar.even}">
+                        <td class="evenRow" th:text="${product.productId}"></td>
+                        <td class="evenRow" th:text="${product.name}"></td>
+                        <td class="evenRow" th:text="${product.price}"></td>
+                        <td class="evenRow" th:text="${product.weight}"></td>
+                        <td class="evenRow" th:text="${product.fullDate}"></td>
+                        <td class="evenRow" th:text="${product.description}"></td>
+                    </div>
+                    <div th:if="${statVar.odd}">
+                        <td th:text="${product.productId}"></td>
+                        <td th:text="${product.name}"></td>
+                        <td th:text="${product.price}"></td>
+                        <td th:text="${product.weight}"></td>
+                        <td th:text="${product.fullDate}"></td>
+                        <td th:text="${product.description}"></td>
+                    </div>
+                    <td>
+                        <form action="#" th:action="@{|/removeProduct/${product.productId}|}"
+                                  method="get">
+                                <input type="submit" value="Usuń">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="#" th:action="@{|/updateProductForm/${product.productId}|}"
+                              method="get">
+                            <input type="submit" value="Edytuj">
+                        </form>
+                    </td>
+                    <!--                <td><a th:href="@{/edit/{id}(id=${user.id})}">Edit</a></td>-->
+                    <!--                <td><a th:href="@{/delete/{id}(id=${user.id})}">Delete</a></td>-->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--    <p><a href="/signup">Add a new user</a></p>-->
+</div>
+
+<!--<div>-->
+<!--    <p>Dodaj nowy produkt</p>-->
+<!--    <button type="button" formaction="/addProductForm">-->
+<!--        Dodaj-->
+<!--    </button>-->
+<!--</div>-->
+
+<form action="#" th:action="@{/addProductForm}" method="get">
+    <input type="submit" value="Dodaj produkt" id="goToAddProductFormButton">
+</form>
+
+<footer>
+    <small>
+        Projekt sklepu
+    </small>
+</footer>
+</body>
+
+</html>

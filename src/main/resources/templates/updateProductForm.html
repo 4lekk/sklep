@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Edytuj</title>
+</head>
+
+<body>
+  <form action="#" th:object="${product}"
+        th:action="@{|/updateProduct/${product.productId}|}" method="get">
+<!--    remember to try to change to post-->
+      <label for="name">Nazwa</label>
+      <input type="text" th:field="*{name}" id="name">
+      <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+      <label for="price">Cena</label>
+      <input type="text" th:field="*{price}" id="price">
+      <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+      <label for="weight">Waga</label>
+      <input type="text" th:field="*{weight}" id="weight">
+      <span th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
+      <label for="description">Opis</label>
+      <input type="text" th:field="*{description}" id="description">
+      <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+      <input type="submit" value="Zmień dane">
+  </form>
+
+</body>
+</html>
